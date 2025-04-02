@@ -103,6 +103,7 @@ exports.validateUserEmail = async (req, res) => {
   }
 }
 
+//Login
 
 exports.loginUser = async (req, res) => {
   req = matchedData(req);

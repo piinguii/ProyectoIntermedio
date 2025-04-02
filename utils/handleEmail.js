@@ -55,3 +55,4 @@ const sendEmail = async (emailOptions) => {
 };
 
 module.exports = { sendEmail };
+
