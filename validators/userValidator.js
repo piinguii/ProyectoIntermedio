@@ -28,6 +28,13 @@ const validateRegisterUser = [
 
 module.exports = { validateRegisterUser };
 
+const validateEmailCode = [
+  check('code')
+    .exists().notEmpty().isLength({ min: 6, max: 6 })
+    .withMessage('El código debe tener exactamente 6 dígitos'),
+  (req, res, next) => validateResults(req, res, next)
+];
+
 const validateLoginUser = [
     check("email")
       .exists().notEmpty().isEmail()
@@ -42,5 +49,29 @@ const validateLoginUser = [
     }
   ];
   
-  module.exports = { validateRegisterUser, validateLoginUser };
+ç
+
+  const validatePersonalData = [
+    check('name').exists().notEmpty().isString(),
+    check('lastname').exists().notEmpty().isString(),
+    check('nif').exists().notEmpty().isString(),
+    (req, res, next) => validateResults(req, res, next)
+  ];
+  
+  const validateCompanyData = [
+    check('name').exists().notEmpty().isString(),
+    check('cif').exists().notEmpty().isString(),
+    check('address').exists().notEmpty().isString(),
+    check('isFreelancer').optional().isBoolean(),
+    (req, res, next) => validateResults(req, res, next)
+  ];
+  
+  module.exports = {
+    validateRegisterUser,
+    validateLoginUser,
+    validateEmailCode,
+    validatePersonalData,
+    validateCompanyData
+  };
+  
 

@@ -9,15 +9,6 @@ Content-Type: application/json
   "password": "supersecure123"
 }
 
-### Validar email con código
-PUT http://localhost:5000/api/user/validate
-Content-Type: application/json
-Authorization: Bearer {{AQUÍ_TU_TOKEN}}
-
-{
-  "code": "123456"
-}
-
 ### Login de usuario
 POST http://localhost:5000/api/user/login
 Content-Type: application/json
@@ -25,4 +16,47 @@ Content-Type: application/json
 {
   "email": "carlos@example.com",
   "password": "supersecure123"
+}
+
+### ✅ Validación de email con código
+PUT http://localhost:5000/api/user/validate
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "code": "123456"  // ← reemplaza con el código que llega por email
+}
+
+### 🧍 Onboarding: datos personales
+PATCH http://localhost:5000/api/user/onboarding/personal
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "name": "Claudia",
+  "lastname": "Martínez",
+  "nif": "12345678A"
+}
+
+### 🏢 Onboarding: datos de compañía
+PATCH http://localhost:5000/api/user/onboarding/company
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "name": "Mi Empresa SL",
+  "cif": "B12345678",
+  "address": "Calle Falsa 123",
+  "isFreelancer": false
+}
+
+### 🧑‍💼 Onboarding: autónomo
+PATCH http://localhost:5000/api/user/onboarding/company
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "cif": "00000000Z",
+  "address": "Mi casa",
+  "isFreelancer": true
 }

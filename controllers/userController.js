@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const handleGenerateCode = require('../utils/handleRegister');
 const { matchedData } = require('express-validator');
+const { sendEmail } = require('../utils/handleEmail');
 
 exports.registerUser = async (req, res) => {
   // Extrae solo los datos validados por express-validator
@@ -136,5 +137,56 @@ exports.loginUser = async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Error al hacer login' });
+  }
+};
+
+
+//Onboarding
+
+exports.updatePersonalData = async (req, res) => {
+  const { name, lastname, nif } = matchedData(req);
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Token no proporcionado' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    user.personalData = { ...user.personalData, name, lastname, nif };
+    await user.save();
+
+    return res.status(200).json({ message: 'Datos personales actualizados correctamente' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Error al actualizar datos personales' });
+  }
+};
+
+exports.updateCompanyData = async (req, res) => {
+  const { name, cif, address, isFreelancer } = matchedData(req);
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Token no proporcionado' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    if (isFreelancer) {
+      user.company = {
+        name: user.personalData.name,
+        cif: cif,
+        address: address
+      };
+    } else {
+      user.company = { name, cif, address };
+    }
+
+    await user.save();
+    return res.status(200).json({ message: 'Datos de la compañía actualizados correctamente' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Error al actualizar datos de la compañía' });
   }
 };
