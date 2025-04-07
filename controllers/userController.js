@@ -4,9 +4,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const handleGenerateCode = require('../utils/handleRegister');
 const { matchedData } = require('express-validator');
-const { sendEmail } = require('../utils/handleEmail');
 
-exports.registerUser = async (req, res) => {
+const registerUser = async (req, res) => {
   // Extrae solo los datos validados por express-validator
   req = matchedData(req);
 
@@ -46,13 +45,6 @@ exports.registerUser = async (req, res) => {
 
     await user.save();
 
-    // Enviar código de verificación por correo electrónico
-    await sendEmail({
-      from: process.env.EMAIL_FROM,
-      to: user.email,
-      subject: 'Código de verificación',
-      text: `Tu código de verificación es: ${code}`
-    });
 
     // Genera el token JWT
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
@@ -79,7 +71,7 @@ exports.registerUser = async (req, res) => {
 };
 
 //Validacion del email
-exports.validateUserEmail = async (req, res) => {
+const validateUserEmail = async (req, res) => {
   const { code } = matchedData(req);
   try {
     const token = req.headers.authorization?.split(' ')[1];
@@ -105,8 +97,7 @@ exports.validateUserEmail = async (req, res) => {
 }
 
 //Login
-
-exports.loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
   req = matchedData(req);
   try {
     const { email, password } = req;
@@ -143,27 +134,23 @@ exports.loginUser = async (req, res) => {
 
 //Onboarding
 
-exports.updatePersonalData = async (req, res) => {
+const updatePersonalData = async (req, res) => {
   const { name, lastname, nif } = matchedData(req);
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Token no proporcionado' });
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
-    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+    
+    const user = req.user;
 
     user.personalData = { ...user.personalData, name, lastname, nif };
     await user.save();
-
     return res.status(200).json({ message: 'Datos personales actualizados correctamente' });
+    
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Error al actualizar datos personales' });
   }
 };
 
-exports.updateCompanyData = async (req, res) => {
+const updateCompanyData = async (req, res) => {
   const { name, cif, address, isFreelancer } = matchedData(req);
   try {
     const token = req.headers.authorization?.split(' ')[1];
@@ -189,4 +176,65 @@ exports.updateCompanyData = async (req, res) => {
     console.error(err);
     return res.status(500).json({ message: 'Error al actualizar datos de la compañía' });
   }
+};
+
+//Subir logo
+const uploadUserLogo = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Token no proporcionado' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No se envió ningún archivo' });
+    }
+
+    const imageUrl = `${req.protocol}://${req.get('host')}/storage/logos/${req.file.filename}`;
+    user.logoUrl = imageUrl;
+    await user.save();
+
+    res.status(200).json({ message: 'Logo subido correctamente', logoUrl: imageUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al subir el logo' });
+  }
+};
+
+//endpoints 
+//GET profile
+
+const getUserProfile = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      return res.status(401).json({ message: 'Token no proporcionado' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select('-password -code');
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.status(200).json({ user });
+  } catch (err) {
+    console.error(err);
+    res.status(403).json({ message: 'Token inválido o expirado' });
+  }
+};
+
+
+module.exports = {
+  registerUser,
+  validateUserEmail,
+  loginUser,
+  updatePersonalData,
+  updateCompanyData,
+  uploadUserLogo,
+  getUserProfile
 };

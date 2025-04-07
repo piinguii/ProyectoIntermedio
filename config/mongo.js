@@ -7,6 +7,7 @@ const dbConnect = () => {
   mongoose.set('strictQuery', false);
   try {
     mongoose.connect(db_uri);
+    console.log("Conectado a la BD");
   } catch (error) {
     console.error("Error conectando a la BD:", error);
   }

@@ -26,8 +26,6 @@ const validateRegisterUser = [
   }
 ];
 
-module.exports = { validateRegisterUser };
-
 const validateEmailCode = [
   check('code')
     .exists().notEmpty().isLength({ min: 6, max: 6 })
@@ -49,12 +47,11 @@ const validateLoginUser = [
     }
   ];
   
-ç
 
-  const validatePersonalData = [
+const validatePersonalData = [
     check('name').exists().notEmpty().isString(),
     check('lastname').exists().notEmpty().isString(),
-    check('nif').exists().notEmpty().isString(),
+    check('nif').exists().notEmpty().isLength({min: 9, max: 9}),
     (req, res, next) => validateResults(req, res, next)
   ];
   
@@ -68,8 +65,8 @@ const validateLoginUser = [
   
   module.exports = {
     validateRegisterUser,
-    validateLoginUser,
     validateEmailCode,
+    validateLoginUser,
     validatePersonalData,
     validateCompanyData
   };
