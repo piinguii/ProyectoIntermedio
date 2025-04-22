@@ -8,14 +8,21 @@ const {
   updatePersonalData,
   updateCompanyData,
   uploadUserLogo,
-  getUserProfile
+  getUserProfile,
+  forgotPassword,
+  resetPassword,
+  inviteUser,
+  deleteUser
 } = require('../controllers/userController');
 const {
   validateRegisterUser,
   validateLoginUser,
   validateEmailCode,
   validatePersonalData,
-  validateCompanyData
+  validateCompanyData,
+  validateForgotPassword,
+  validateResetPassword,
+  validateInvite
 } = require('../validators/userValidator');
 
 const authMiddleware = require('../middleware/auth');
@@ -31,5 +38,15 @@ router.patch(
   uploadUserLogo
 );
 router.get('/profile', authMiddleware, getUserProfile);
+router.post('/forgot-password', validateForgotPassword, forgotPassword);
+router.post('/reset-password', validateResetPassword, resetPassword);
+
+router.post('/invite', authMiddleware, validateInvite, inviteUser);
+
+
+router.delete('/', authMiddleware, deleteUser);
+
+
+
 
 module.exports = router;

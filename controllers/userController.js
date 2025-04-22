@@ -228,13 +228,125 @@ const getUserProfile = async (req, res) => {
   }
 };
 
+//reset password
+const forgotPassword = async (req, res) => {
+  const { email } = matchedData(req);
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    const code = handleGenerateCode();
+    user.resetCode = code;
+    user.resetCodeExpiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
+    await user.save();
+
+    res.status(200).json({
+      message: 'Código generado correctamente',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al generar el código' });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { email, code, newPassword } = matchedData(req);
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user || user.resetCode !== code || user.resetCodeExpiration < Date.now()) {
+      return res.status(400).json({ message: 'Código inválido o expirado' });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    user.resetCode = null;
+    user.resetCodeExpiration = null;
+
+    await user.save();
+    res.status(200).json({ message: 'Contraseña actualizada correctamente' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error al actualizar contraseña' });
+  }
+};
+
+//invite user
+
+const inviteUser = async (req, res) => {
+  const { email } = matchedData(req);
+
+  try {
+    const inviter = req.user; 
+
+    if (!inviter.company || !inviter.company.cif) {
+      return res.status(400).json({ message: 'Debes tener una compañía configurada para invitar' });
+    }
+
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(409).json({ message: 'El usuario ya existe' });
+
+    const code = handleGenerateCode();
+
+    const newGuest = new User({
+      email,
+      role: 'guest',
+      code,
+      status: 'pending',
+      company: inviter.company,
+      attempts: 3
+    });
+
+    await newGuest.save();
+
+    res.status(201).json({
+      message: 'Invitación creada correctamente',
+      guest: {
+        email: newGuest.email,
+        role: newGuest.role,
+        status: newGuest.status,
+        company: newGuest.company
+      },
+     
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error al invitar usuario' });
+  }
+};
+
+//delete user
+const deleteUser = async (req, res) => {
+  try {
+    const user = req.user; 
+
+    const isSoftDelete = req.query.soft === 'true';
+
+    if (isSoftDelete) {
+      user.status = 'deleted';
+      await user.save();
+      return res.status(200).json({ message: 'Usuario marcado como eliminado (soft delete)' });
+    } else {
+      await user.deleteOne();
+      return res.status(200).json({ message: 'Usuario eliminado permanentemente (hard delete)' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al eliminar el usuario' });
+  }
+};
+
 
 module.exports = {
   registerUser,
   validateUserEmail,
-  loginUser,
+  loginUser, 
   updatePersonalData,
   updateCompanyData,
   uploadUserLogo,
-  getUserProfile
+  getUserProfile,
+  forgotPassword,
+  resetPassword,
+  inviteUser,
+  deleteUser
 };

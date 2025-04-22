@@ -62,13 +62,42 @@ const validatePersonalData = [
     check('isFreelancer').optional().isBoolean(),
     (req, res, next) => validateResults(req, res, next)
   ];
+
+  //reset password
+
+  const validateForgotPassword = [
+    check("email")
+      .exists().withMessage("El campo email es obligatorio")
+      .notEmpty().withMessage("El campo email no puede estar vacío")
+      .isEmail().withMessage("El email no es válido"),
+    (req, res, next) => validateResults(req, res, next)
+  ];
+  
+  
+  const validateResetPassword = [
+    check('email').exists().notEmpty().isEmail(),
+    check('code').exists().notEmpty().isLength({ min: 6, max: 6 }),
+    check('newPassword').exists().notEmpty().isLength({ min: 8 }),
+    (req, res, next) => validateResults(req, res, next)
+  ];
+  
+  const validateInvite = [
+    check('email')
+      .exists().notEmpty().isEmail()
+      .withMessage('Debes proporcionar un email válido'),
+    (req, res, next) => validateResults(req, res, next)
+  ];
+  
   
   module.exports = {
     validateRegisterUser,
     validateEmailCode,
     validateLoginUser,
     validatePersonalData,
-    validateCompanyData
+    validateCompanyData,
+    validateForgotPassword,
+    validateResetPassword,
+    validateInvite
   };
   
 

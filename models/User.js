@@ -17,6 +17,10 @@ const UserSchema = new mongoose.Schema({
     cif: String,
     address: String,
   },
-  logoUrl: String
+  logoUrl: String,
+  //reset password
+  resetCode: { type: String },
+  resetCodeExpiration: { type: Date }
+
 });
 module.exports = mongoose.model('User', UserSchema);
