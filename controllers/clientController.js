@@ -40,6 +40,38 @@ const createClient = async (req, res) => {
   }
 };
 
+//put
+const updateClient = async (req, res) => {
+    const { id } = req.params;
+    const data = matchedData(req);
+    const user = req.user;
+  
+    try {
+      const client = await Client.findById(id);
+  
+      if (!client) {
+        return res.status(404).json({ message: 'Cliente no encontrado' });
+      }
+  
+      // Verificación de permisos
+      const belongsToUserOrCompany =
+        client.createdBy.equals(user._id) || client.companyCIF === user.company?.cif;
+  
+      if (!belongsToUserOrCompany) {
+        return res.status(403).json({ message: 'No tienes permiso para editar este cliente' });
+      }
+  
+      Object.assign(client, data);
+      await client.save();
+  
+      res.status(200).json({ message: 'Cliente actualizado', client });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error al actualizar cliente' });
+    }
+};
+
 module.exports{
-    createClient
+    createClient,
+    updateClient
 };
