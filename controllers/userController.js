@@ -153,6 +153,7 @@ const updatePersonalData = async (req, res) => {
 const updateCompanyData = async (req, res) => {
   const { name, cif, address, isFreelancer } = matchedData(req);
   try {
+    //cambiar a req user
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Token no proporcionado' });
 
@@ -181,6 +182,7 @@ const updateCompanyData = async (req, res) => {
 //Subir logo
 const uploadUserLogo = async (req, res) => {
   try {
+    //cambiar a req user
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Token no proporcionado' });
 
@@ -208,6 +210,7 @@ const uploadUserLogo = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
+    //cambiar a req user
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {

@@ -6,12 +6,15 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-
+const clientRoutes = require('./routes/clientRoutes');
 dotenv.config();
 connectDB();
 
 app.use(express.json());
 app.use('/api/user', userRoutes);
+
+app.use('/api', clientRoutes);
+
 
 // Crear carpeta de logos si no existe
 const logoDir = path.join(__dirname, 'storage', 'logos');
