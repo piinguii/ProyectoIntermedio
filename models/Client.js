@@ -1,9 +1,14 @@
-
+const mongoose = require('mongoose');
 const ClientSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String},
-    phone: { type: String },
-    address: { type: String },
+    address: {
+      street: { type: String, required: true },
+      number: { type: Number, required: true },
+      postal: { type: Number, required: true },
+      city: { type: String, required: true },
+      province: { type: String, required: true }
+    },
     archived: { type: Boolean, default: false },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     companyCIF: { type: String } // solo se guarda el cif para enlazar

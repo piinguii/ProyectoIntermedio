@@ -15,7 +15,9 @@ app.use('/api/user', userRoutes);
 
 app.use('/api', clientRoutes);
 
-
+const projectRoutes = require('./routes/projectRoutes');
+app.use('/api/project', projectRoutes);
+ 
 // Crear carpeta de logos si no existe
 const logoDir = path.join(__dirname, 'storage', 'logos');
 if (!fs.existsSync(logoDir)) fs.mkdirSync(logoDir, { recursive: true });
