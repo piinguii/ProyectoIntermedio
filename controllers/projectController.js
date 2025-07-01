@@ -73,7 +73,7 @@ const getAllProjects = async (req, res) => {
     const projects = await Project.find({
       archived: false,
       createdBy: user._id
-    }).populate('client');
+    }).populate('clientId');
 
     res.status(200).json({ success: true, projects });
   } catch (err) {
@@ -88,7 +88,7 @@ const getProjectById = async (req, res) => {
   const user = req.user;
 
   try {
-    const project = await Project.findById(id).populate('client');
+    const project = await Project.findById(id).populate('clientId');
 
     if (!project || project.archived || !project.createdBy.equals(user._id)) {
       return handleHttpError(res, 'Proyecto no encontrado o sin acceso', 404);
@@ -150,7 +150,7 @@ const getArchivedProjects = async (req, res) => {
     const projects = await Project.find({
       archived: true,
       createdBy: user._id
-    }).populate('client');
+    }).populate('clientId');
 
     res.status(200).json({ success: true, projects });
   } catch (err) {

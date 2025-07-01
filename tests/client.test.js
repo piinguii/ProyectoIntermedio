@@ -222,4 +222,15 @@ describe('Client API', () => {
     const unarchived = await Client.findById(client._id);
     expect(unarchived.archived).toBe(false);
   });
+
+  it('should return 404 for non-existent client', async () => {
+    const fakeId = new mongoose.Types.ObjectId();
+    const res = await request(app)
+      .get(`/api/client/${fakeId}`)
+      .set('Authorization', `Bearer ${token}`);
+  
+    expect(res.statusCode).toBe(404);
+    expect(res.body.error).toBe('Cliente no encontrado o sin acceso');
+  });
+  
 });

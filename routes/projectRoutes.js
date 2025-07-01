@@ -5,7 +5,11 @@ const {
     createProject,
     updateProject,
     getAllProjects,
-    getProjectById
+    getProjectById,
+    archiveProject,
+    deleteProject,
+    getArchivedProjects,  
+    unarchiveProject
 } = require('../controllers/projectController');
 const { validateCreateProject } = require('../validators/projectValidator');
 
