@@ -3,10 +3,10 @@ POST http://localhost:5000/api/user/register
 Content-Type: application/json
 
 {
-  "name": "Carlos",
-  "age": 25,
-  "email": "carlos@example.com",
-  "password": "supersecure123"
+  "name": "Test User",
+  "age": 30,
+  "email": "testuser@example.com",
+  "password": "Password123"
 }
 
 ### Login de usuario
@@ -14,8 +14,8 @@ POST http://localhost:5000/api/user/login
 Content-Type: application/json
 
 {
-  "email": "carlos@example.com",
-  "password": "supersecure123"
+  "email": "testuser@example.com",
+  "password": "Password123"
 }
 
 ### ✅ Validación de email con código
@@ -24,7 +24,7 @@ Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
 
 {
-  "code": "123456"  // ← reemplaza con el código que llega por email
+  "code": "123456"  // Replace with actual code
 }
 
 ### 🧍 Onboarding: datos personales
@@ -33,8 +33,8 @@ Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
 
 {
-  "name": "Claudia",
-  "lastname": "Martínez",
+  "name": "New Name",
+  "lastname": "New Lastname",
   "nif": "12345678A"
 }
 
@@ -44,9 +44,9 @@ Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
 
 {
-  "name": "Mi Empresa SL",
+  "name": "Company Name",
   "cif": "B12345678",
-  "address": "Calle Falsa 123",
+  "address": "Street 123",
   "isFreelancer": false
 }
 
@@ -60,3 +60,184 @@ Authorization: Bearer {{TOKEN}}
   "address": "Mi casa",
   "isFreelancer": true
 }
+
+### Upload User Logo
+PATCH http://localhost:5000/api/user/upload-logo
+Authorization: Bearer {{TOKEN}}
+Content-Type: multipart/form-data
+
+# Use your HTTP client to attach a file field named 'logo'
+
+### Get User Profile
+GET http://localhost:5000/api/user/profile
+Authorization: Bearer {{TOKEN}}
+
+### Forgot Password
+POST http://localhost:5000/api/user/forgot-password
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com"
+}
+
+### Reset Password
+POST http://localhost:5000/api/user/reset-password
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "code": "123456",  // Replace with actual code
+  "newPassword": "NewPassword123"
+}
+
+### Invite User
+POST http://localhost:5000/api/user/invite
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "email": "invitee@example.com"
+}
+
+### Delete User
+DELETE http://localhost:5000/api/user/
+Authorization: Bearer {{TOKEN}}
+
+
+
+
+
+### Create Client
+POST http://localhost:5000/api/
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  // client fields here
+}
+
+### Update Client
+PUT http://localhost:5000/api/:id
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  // client fields here
+}
+
+### Get All Clients
+GET http://localhost:5000/api/
+Authorization: Bearer {{TOKEN}}
+
+### Get Archived Clients
+GET http://localhost:5000/api/archived
+Authorization: Bearer {{TOKEN}}
+
+### Get Client By ID
+GET http://localhost:5000/api/:id
+Authorization: Bearer {{TOKEN}}
+
+### Archive Client
+PATCH http://localhost:5000/api/:id/archive
+Authorization: Bearer {{TOKEN}}
+
+### Unarchive Client
+PATCH http://localhost:5000/api/:id/unarchive
+Authorization: Bearer {{TOKEN}}
+
+### Delete Client
+DELETE http://localhost:5000/api/:id
+Authorization: Bearer {{TOKEN}}
+
+### Create Project
+POST http://localhost:5000/api/project/
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  // project fields here
+}
+
+### Update Project
+PUT http://localhost:5000/api/project/:id
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  // project fields here
+}
+
+### Get All Projects
+GET http://localhost:5000/api/project/
+Authorization: Bearer {{TOKEN}}
+
+### Get Archived Projects
+GET http://localhost:5000/api/project/archived
+Authorization: Bearer {{TOKEN}}
+
+### Get Project By ID
+GET http://localhost:5000/api/project/:id
+Authorization: Bearer {{TOKEN}}
+
+### Archive Project
+PATCH http://localhost:5000/api/project/:id/archive
+Authorization: Bearer {{TOKEN}}
+
+### Unarchive Project
+PATCH http://localhost:5000/api/project/:id/unarchive
+Authorization: Bearer {{TOKEN}}
+
+### Delete Project
+DELETE http://localhost:5000/api/project/:id
+Authorization: Bearer {{TOKEN}}
+
+
+
+### Create Delivery Note
+POST http://localhost:5000/api/deliveryNotes/
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  // delivery note fields here
+}
+
+### Get All Delivery Notes
+GET http://localhost:5000/api/deliveryNotes/
+Authorization: Bearer {{TOKEN}}
+
+### Get Archived Delivery Notes
+GET http://localhost:5000/api/deliveryNotes/archived/list
+Authorization: Bearer {{TOKEN}}
+
+### Get Signed Delivery Notes
+GET http://localhost:5000/api/deliveryNotes/signed
+Authorization: Bearer {{TOKEN}}
+
+### Get Unsigned Delivery Notes
+GET http://localhost:5000/api/deliveryNotes/unsigned
+Authorization: Bearer {{TOKEN}}
+
+### Get Delivery Note PDF
+GET http://localhost:5000/api/deliveryNotes/pdf/:id
+Authorization: Bearer {{TOKEN}}
+
+### Sign Delivery Note
+PATCH http://localhost:5000/api/deliveryNotes/:id/sign
+Authorization: Bearer {{TOKEN}}
+
+### Archive Delivery Note
+DELETE http://localhost:5000/api/deliveryNotes/:id/archive
+Authorization: Bearer {{TOKEN}}
+
+### Restore Delivery Note
+PATCH http://localhost:5000/api/deliveryNotes/:id/restore
+Authorization: Bearer {{TOKEN}}
+
+### Get Delivery Note By ID
+GET http://localhost:5000/api/deliveryNotes/:id
+Authorization: Bearer {{TOKEN}}
+
+### Delete Delivery Note
+DELETE http://localhost:5000/api/deliveryNotes/:id
+Authorization: Bearer {{TOKEN}}
