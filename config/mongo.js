@@ -1,16 +1,15 @@
-
-
-// config/mongo.js
 const mongoose = require('mongoose');
-const dbConnect = () => {
-  const db_uri = process.env.DB_URI;
-  mongoose.set('strictQuery', false);
+
+const connectDB = async () => {
   try {
-    mongoose.connect(db_uri);
+    const db_uri = process.env.DB_URI;
+    if (!db_uri) throw new Error("Missing DB_URI in environment");
+    await mongoose.connect(db_uri);
     console.log("Conectado a la BD");
-  } catch (error) {
-    console.error("Error conectando a la BD:", error);
+  } catch (err) {
+    console.error("Error connecting to DB", err);
+    process.exit(1);
   }
-  mongoose.connection.on("connected", () => console.log("Conectado a la BD"));
 };
-module.exports = dbConnect;
+
+module.exports = connectDB;

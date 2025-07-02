@@ -6,6 +6,8 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
+
+
 const clientRoutes = require('./routes/clientRoutes');
 const deliveryNoteRoutes = require('./routes/deliveryNoteRoutes');
 dotenv.config();
@@ -22,21 +24,25 @@ app.use('/api/deliveryNotes', deliveryNoteRoutes);
 
 // Debug: Log all registered routes
 console.log('Registered routes:');
-app._router.stack.forEach((middleware) => {
-  if (middleware.route) {
-    console.log(`${Object.keys(middleware.route.methods)} ${middleware.route.path}`);
-  } else if (middleware.name === 'router') {
-    console.log(`Router mounted at: ${middleware.regexp}`);
-  }
-});
+if (app._router && app._router.stack) {
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      console.log(`${Object.keys(middleware.route.methods)} ${middleware.route.path}`);
+    } else if (middleware.name === 'router') {
+      console.log(`Router mounted at: ${middleware.regexp}`);
+    }
+  });
+}
 
 // Crear carpeta de logos si no existe
 const logoDir = path.join(__dirname, 'storage', 'logos');
 if (!fs.existsSync(logoDir)) fs.mkdirSync(logoDir, { recursive: true });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 module.exports = app;
