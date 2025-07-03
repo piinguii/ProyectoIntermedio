@@ -113,13 +113,17 @@ Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
 
 {
-  "name": "Empresa S.A.",
-  "email": "cliente@empresa.com",
-  "phone": "912345678",
-  "address": "Calle Falsa 123, Madrid",
-  "nif": "B12345678",
-  "contactPerson": "Juan Pérez"
+  "name": "Acme Corp",
+  "email": "acme@clientes.com",
+  "address": {
+    "street": "Avenida Siempre Viva",
+    "number": 742,
+    "postal": 28001,
+    "city": "Madrid",
+    "province": "Madrid"
+  }
 }
+
 
 ### Update Client
 PUT http://localhost:5000/api/:id
@@ -129,10 +133,7 @@ Authorization: Bearer {{TOKEN}}
 {
   "name": "Empresa S.A. Actualizada",
   "email": "nuevoemail@empresa.com",
-  "phone": "987654321",
-  "address": "Avenida Real 456, Madrid",
-  "nif": "B87654321",
-  "contactPerson": "Ana López"
+  "address": "Avenida Real 456, Madrid"
 }
 
 ### Get All Clients
@@ -166,11 +167,9 @@ Authorization: Bearer {{TOKEN}}
 
 {
   "name": "Proyecto Alpha",
-  "description": "Desarrollo de plataforma web",
-  "client": "CLIENT_ID",  // Reemplaza por el _id real del cliente
-  "startDate": "2024-06-01",
-  "endDate": "2024-12-31",
-  "status": "active"
+  "projectCode": "PA-001",
+  "clientId": "CLIENT_ID",  // ID de un cliente existente
+  "description": "Desarrollo de plataforma web"
 }
 
 ### Update Project
@@ -180,11 +179,9 @@ Authorization: Bearer {{TOKEN}}
 
 {
   "name": "Proyecto Alpha Modificado",
-  "description": "Actualización de la plataforma web",
-  "client": "CLIENT_ID",
-  "startDate": "2024-06-01",
-  "endDate": "2025-01-31",
-  "status": "paused"
+  "projectCode": "PA-001",
+  "clientId": "CLIENT_ID",
+  "description": "Actualización de la plataforma web"
 }
 
 ### Get All Projects
@@ -219,21 +216,13 @@ Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
 
 {
-  "project": "PROJECT_ID",  // Reemplaza por el _id real del proyecto
-  "date": "2024-06-10",
-  "items": [
-    {
-      "description": "Entrega de material A",
-      "quantity": 10,
-      "unit": "unidad"
-    },
-    {
-      "description": "Servicio de instalación",
-      "quantity": 1,
-      "unit": "servicio"
-    }
-  ],
-  "notes": "Entrega parcial"
+  "clientId": "CLIENT_ID",      // ID de un cliente existente
+  "projectId": "PROJECT_ID",    // ID de un proyecto existente
+  "format": "digital",          // o "papel", según tu modelo
+  "material": "Material X",
+  "hours": 5,
+  "description": "Entrega de material y mano de obra",
+  "workdate": "2024-06-10"
 }
 
 ### Get All Delivery Notes
